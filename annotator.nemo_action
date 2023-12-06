@@ -1,7 +1,11 @@
 [Nemo Action]
 Active=true
-Name=Заметки
-Comment=Добавить комментарий
+Name=Annotation
+Name[ru]=Заметки
+Name[sl]=Opombe
+Comment=Add a comment to the file
+Comment[ru]=Добавить комментарий к файлу
+Comment[sl]=Dodajte komentar v datoteko
 Exec=<annotator %F>
 Icon-Name=emblem-note
 Selection=s

@@ -8,7 +8,7 @@ The main dependency is GJS -- the Gnome interpreter for JavaScript.
 
 * Save the file `annotater` wherever you want, make sure that it is executable.
 * In order for it to work with the Thunar file manager, it must be written to Thunar's "Special Actions" using the command line `annotator %f`.
-* In order for this to become a plugin for **Nemo**, the files `annotator` and `annotator.nemo_action` must be placed in `~/.local/share/nemo/actions`.
+* In order for this to become a plugin for **Nemo**, the <u>both</u> files: `annotator` and `annotator.nemo_action` must be placed in `~/.local/share/nemo/actions`.
 
 ## Usage:
 
