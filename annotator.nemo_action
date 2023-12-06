@@ -1,0 +1,10 @@
+[Nemo Action]
+Active=true
+Name=Заметки
+Comment=Добавить комментарий
+Exec=<annotator %F>
+Icon-Name=emblem-note
+Selection=s
+Extensions=any;
+Dependencies=gjs
+Quote=single

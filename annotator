@@ -1,0 +1,90 @@
+#!/usr/bin/gjs
+imports.gi.versions.Gtk = '3.0';
+const {GLib, Gio, Gtk, Gdk} = imports.gi;
+const filePath = ARGV[0];
+
+// Читаем аннотацию из файла // Reading the Annotation from file
+function readAnnotation(filePath) {
+	const fileInfo = Gio.File.new_for_path(filePath);
+	const fileAttr = fileInfo.query_info('metadata::annotation', 0, null);
+	return fileAttr.get_attribute_string('metadata::annotation');
+}
+
+// Создаем окно с текстовым многострочным полем ввода // Creating a window with multiline text entry
+function createWindow(annotationValue) {
+	Gtk.init(null);
+
+	//icon = Gio.ThemedIcon.new("emblem-note")
+
+	const window = new Gtk.Window({
+		title: 'Annotation for \'' + filePath.split('/').pop() + '\'',
+		icon_name: 'emblem-note',
+		default_width: 400,
+		default_height: 300,
+		resizable: true,
+		border_width: 10
+	});
+
+//window.set_icon(icon);
+
+	window.connect('destroy', Gtk.main_quit);
+
+	window.connect('key-press-event', (widget, event) => {
+		let keyval = event.get_keyval()[1];
+		if (keyval === Gdk.KEY_Escape) {
+			Gtk.main_quit();
+		}
+	});
+
+	const textBuffer = new Gtk.TextBuffer({});
+	const textView = new Gtk.TextView({
+		buffer: textBuffer
+	});
+	textView.set_wrap_mode(Gtk.WrapMode.WORD);
+
+	const buffer = textView.get_buffer();
+	annotationValue?"":annotationValue=''
+	buffer.set_text(annotationValue, -1);
+
+	const saveButton = new Gtk.Button({ label: 'Save' });
+	saveButton.connect('clicked', () => {
+		const annotation = textBuffer.get_text(
+			textBuffer.get_start_iter(),
+			textBuffer.get_end_iter(),
+			true
+		);
+
+		setAnnotation(filePath, annotation);
+		Gtk.main_quit();
+	});
+
+	const cancelButton = new Gtk.Button({ label: 'Cancel' });
+	cancelButton.connect('clicked', () => {
+		Gtk.main_quit();
+	});
+
+	const buttonBox = new Gtk.Box({ spacing: 6 });
+	buttonBox.pack_start(saveButton, true, true, 0);
+	buttonBox.pack_start(cancelButton, true, true, 0);
+
+	const vbox = new Gtk.VBox();
+	vbox.pack_start(textView, true, true, 0);
+	//vbox.pack_start(saveButton, false, false, 0);
+	vbox.pack_start(buttonBox, false, true, 0);
+	window.add(vbox);
+
+	window.show_all();
+	Gtk.main();
+}
+
+// Пишем аннотацию в файл // Writing the Annotation to the file
+function setAnnotation(filePath,annotationValue){
+	let file = Gio.File.new_for_path(filePath);
+	const attributeNames = ['metadata::annotation', 'metadata::emblems'];
+	let fileInfo = file.query_info('metadata::annotation', Gio.FileQueryInfoFlags.NONE, null);
+	fileInfo.set_attribute_string('metadata::annotation', annotationValue);
+	file.set_attributes_from_info(fileInfo, Gio.FileQueryInfoFlags.NONE, null);
+}
+
+const annotationValue = readAnnotation(filePath);
+createWindow(annotationValue);
